@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.logging.Level;
@@ -42,30 +43,11 @@ public class AppointmentSystem extends Application {
      * @param args the command line arguments
      */
     public static void main(String[] args){
-//        Locale.setDefault(new Locale("fr"));
-        Calendar myCalendar = Calendar.getInstance();
-        TimeZone myTZ = TimeZone.getDefault();
-
         
         try{
+ 
          DBConnection.makeConnection();           
-//         System.out.println(myCalendar.getTime());
-//        System.out.println(myTZ);
-        
-        //create an object to execute mysql
-//        Statement stmt = conn.createStatement();
-        
-        //create and post a mysql statement results into resultSet variable
-//        String str = "SELECT * FROM user;";
-//        ResultSet result =  stmt.executeQuery(str);
-//        
-        
-        //retrieve records from mySQL call
-//        while(result.next()){
-//            System.out.println(result.getInt("userid") + ": " + result.getString("userName"));
-//        }
-        
-        
+
         
         launch(args);
         DBConnection.closeConnection();           

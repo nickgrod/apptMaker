@@ -11,6 +11,9 @@ import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Optional;
@@ -83,6 +86,7 @@ public class LoginLandingController implements Initializable {
 
     }
 
+    
     public void initData(int userID, String userName) {
         userIDInternal = userID;
         userNameInternal = userName;
@@ -105,9 +109,19 @@ public class LoginLandingController implements Initializable {
     }
 
     public ObservableList<Appointment> getAppointments() {
+        
+// prepares the calendar and date to be converted for the sql query        
+                java.util.Date utilDate = new java.util.Date();
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(utilDate);
+                cal.set(Calendar.MILLISECOND, 0);
+                Timestamp time = new java.sql.Timestamp(cal.getTimeInMillis());
+
+        
+        
         try {
 
-            String query = "SELECT * from appointment WHERE start >= NOW();";
+            String query = "SELECT * from appointment WHERE start >= UNIX_TIMESTAMP('" + time + "')";
             Statement stmt = conn.createStatement();
             ResultSet result = stmt.executeQuery(query);
             while (result.next()) {
@@ -217,7 +231,40 @@ public class LoginLandingController implements Initializable {
             System.out.println(e);
         }
     }
+    
+    //takes the selected appointment and sends it to the edit screen
+    public void editAppointment(ActionEvent event) throws IOException{
+        try{
+            Appointment appt = appointmentTable.getSelectionModel().getSelectedItem();
+            int apptID = appt.getId();
+            openAppointmentScreenEdit(event, apptID);
+        } catch(NullPointerException e){
+            warningMaker("Error", "No appointment selected.", "Please select an appointment to edit.");
+        }
+    }
 
+    
+        //opens appointment screen with pre-filled appointment to edit
+    public void openAppointmentScreenEdit(ActionEvent event, int apptID) throws IOException {
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("AppointmentScreen.fxml"));
+            Parent userWindow = loader.load();
+
+            Scene scene = new Scene(userWindow);
+
+            AppointmentScreenController controller = loader.getController();
+            int passedID = userIDInternal;
+            String passedName = userNameInternal;
+            controller.initData(passedID, passedName, apptID);
+            Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            window.setScene(scene);
+            window.show();
+            window.setTitle("Edit Appointment");
+        } catch (NullPointerException e) {
+            System.out.println(e);
+        }
+    }
     
     
     //deletes whatever appointment is selected on the list
