@@ -125,7 +125,7 @@ public class AppointmentScreenController implements Initializable {
         if (fromHour > toHour || (fromHour == toHour && fromMin > toMin)) {
             warningMaker("Invalid Time", "Please change the time.", "Appointment end time cannot be before start time.");
             return false;
-        } else if (fromHour < relativeOpening || relativeClosing > 18 || (relativeClosing == 18 && toMin > 0)) {
+        } else if (fromHour < relativeOpening || toHour > relativeClosing || (toHour == relativeClosing && toMin > 0)) {
             warningMaker("Invalid Time", "Selected appointment is outside of business hours.", "Appointments can only be scheduled between 8AM and 6PM.");
             return false;
         } else {
@@ -425,6 +425,12 @@ public class AppointmentScreenController implements Initializable {
         Timestamp fromTime = convertDate(hour, minute, amPm);
         Timestamp toTime = convertDate(hour2, minute2, amPm2);
         String description = descriptionField.getText();
+        if(checkOverlap(fromTime)){
+            return;
+        }
+        if(checkOverlap(toTime)){
+            return;
+        }
 
         try {
             int customerID = customers.getSelectionModel().getSelectedItem().getId();
@@ -503,4 +509,40 @@ public class AppointmentScreenController implements Initializable {
         alert.setContentText(message);
         alert.showAndWait();
     }
+    
+    //creates an appointment if current times overlap with another appointment
+    public boolean checkOverlap(Timestamp ts){
+        
+        String query = "SELECT * FROM appointment WHERE '" + ts + "'  BETWEEN start AND end LIMIT 1;";
+        
+        try{
+            Statement stmt = conn.createStatement();
+            ResultSet result = stmt.executeQuery(query);
+            
+            if(result.next()){
+                
+                Timestamp theTime = result.getTimestamp("start");
+                Timestamp endTime = result.getTimestamp("end");
+                    long localStart = theTime.getTime() + userOffsetMillis;
+                    long localEnd = endTime.getTime() + userOffsetMillis;
+            
+            Date startDate = new Date(localStart);
+            Date endDate = new Date(localEnd);
+               
+                String st = toTwelveString(startDate.getHours()) + ":" + toStringMin(startDate.getMinutes());
+                String et = toTwelveString(endDate.getHours()) + ":" + toStringMin(endDate.getMinutes());
+                warningMaker("Cannot Save Appointment", "Overlapping Appointment Found", "Cannot save appointment - overlapping appointment begins at " + st + " and ends at " + et + ".");
+                
+                
+                return true;
+            }else{
+                return false;
+            }
+        } catch (SQLException e){
+            System.out.println("Problem with SQL..." + e);
+            return true;
+        }
+        
+    }
+    
 }

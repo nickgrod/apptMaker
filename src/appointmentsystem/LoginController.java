@@ -102,6 +102,8 @@ public class LoginController implements Initializable {
             try {
                 int success = result.getInt("userid");
                 System.out.println("Valid password, logged in as user number " + success);
+                checkFifteenStart();
+                checkFifteenOngoing();
                 try {
                     result.close();
                 } catch (SQLException e) {
@@ -160,4 +162,54 @@ public class LoginController implements Initializable {
         }
     }
 
+    
+        //checks whether or not there is an appointment starting in the next 15 minutes
+    public void checkFifteenStart() {
+        String query = "SELECT * FROM appointment WHERE start BETWEEN NOW() AND (NOW() + INTERVAL 15 MINUTE) LIMIT 1";
+        try {
+            Statement stmt = conn.createStatement();
+            ResultSet result = stmt.executeQuery(query);
+            if (result.next()) {
+                warningMaker("Upcoming Appointment", "You have an appointment starting soon.", "Please check your schedule.");
+            }
+                            try {
+                    result.close();
+                } catch (SQLException e) {
+                    System.out.println("Couldn't close result set, " + e);
+                }
+                try {
+                    stmt.close();
+                } catch (SQLException e) {
+                    System.out.println("Couldn't close statement, " + e);
+                }
+        } catch (SQLException e) {
+            System.out.println("Problem with checking for the 15..." + e);
+        }
+
+    }
+
+    //checks whether or not there is an appointment ongoing
+    public void checkFifteenOngoing() {
+        String query = "SELECT * FROM appointment WHERE NOW() BETWEEN start AND end LIMIT 1";
+        try {
+            Statement stmt = conn.createStatement();
+            ResultSet result = stmt.executeQuery(query);
+            if (result.next()) {
+                warningMaker("Ongoing Appointment", "There is an appointment ongoing.", "Please check your schedule.");
+            }
+                            try {
+                    result.close();
+                } catch (SQLException e) {
+                    System.out.println("Couldn't close result set, " + e);
+                }
+                try {
+                    stmt.close();
+                } catch (SQLException e) {
+                    System.out.println("Couldn't close statement, " + e);
+                }
+        } catch (SQLException e) {
+            System.out.println("Problem with checking for the ongoing.." + e);
+
+        }
+    }
 }

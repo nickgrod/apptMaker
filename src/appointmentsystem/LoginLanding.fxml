@@ -78,13 +78,13 @@
                   <HBox alignment="CENTER" layoutX="10.0" layoutY="51.0" prefHeight="41.0" prefWidth="300.0" spacing="50.0">
                      <children>
                         <Label text="Month: " />
-                        <ComboBox fx:id="monthBox" prefWidth="150.0" />
+                        <ComboBox fx:id="monthBox" onAction="#changeMonth" prefWidth="150.0" promptText="Month..." />
                      </children>
                   </HBox>
                   <HBox alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="41.0" prefWidth="300.0" spacing="50.0" style="-: none;">
                      <children>
                         <Label text="Week: " />
-                        <ComboBox prefWidth="150.0" />
+                        <ComboBox fx:id="weekBox" onAction="#changeWeek" prefWidth="150.0" promptText="Week..." />
                      </children>
                   </HBox>
                   <HBox alignment="CENTER" layoutX="10.0" layoutY="51.0" prefHeight="41.0" prefWidth="300.0" spacing="50.0">
@@ -105,7 +105,7 @@
                   </HBox>
                   <HBox alignment="CENTER" layoutX="10.0" layoutY="174.0" prefHeight="41.0" prefWidth="300.0">
                      <children>
-                        <Label text="Customers:">
+                        <Label text="Other:">
                            <font>
                               <Font name="Calibri Bold" size="19.0" />
                            </font>
@@ -114,8 +114,8 @@
                   </HBox>
                   <HBox alignment="CENTER" layoutX="10.0" layoutY="174.0" prefHeight="41.0" prefWidth="300.0" spacing="20.0">
                      <children>
-                        <Button fx:id="viewAllCustomersButton" mnemonicParsing="false" text="View All" />
-                        <Button fx:id="addNewCustomerButton" mnemonicParsing="false" onAction="#addUser" text="Add New" />
+                        <Button fx:id="addNewCustomerButton" mnemonicParsing="false" onAction="#addUser" text="Add New Customer" />
+                        <Button mnemonicParsing="false" onAction="#openReportsScreen" text="Reports" />
                      </children>
                   </HBox>
                </children>

@@ -231,7 +231,7 @@ public class CustomerScreenController implements Initializable {
 
     }
 
-    //takes to the new user screen with no edit
+    //takes back to the dashboard page
     public void pressCancel(ActionEvent event) throws IOException {
         try {
             FXMLLoader loader = new FXMLLoader();
